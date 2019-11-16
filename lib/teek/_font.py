@@ -6,6 +6,7 @@ flatten = itertools.chain.from_iterable
 
 
 def _font_property(type_spec, option):
+
     def getter(self):
         return teek.tcl_call(type_spec, "font", "actual", self, "-" + option)
 
@@ -38,12 +39,12 @@ class Font:
     Creating a :class:`.Font` object with a valid font name as an argument
     returns a :class:`.NamedFont` object. For example:
 
-    >>> adca.Font('Helvetica 12')  # not a font name
+    >>> teek.Font('Helvetica 12')  # not a font name
     Font('Helvetica 12')
-    >>> adca.Font('TkFixedFont')   # special font name for default monospace \
+    >>> teek.Font('TkFixedFont')   # special font name for default monospace \
 font
     NamedFont('TkFixedFont')
-    >>> adca.NamedFont('TkFixedFont')    # does the same thing
+    >>> teek.NamedFont('TkFixedFont')    # does the same thing
     NamedFont('TkFixedFont')
 
     .. attribute:: family
@@ -64,7 +65,7 @@ font
         Helvetica-like font, so this line of code gives different values
         platform-specifically:
 
-        >>> adca.Font('Helvetica 12').family     # doctest: +SKIP
+        >>> teek.Font('Helvetica 12').family     # doctest: +SKIP
         'Nimbus Sans L'
     """
 
@@ -168,9 +169,9 @@ class NamedFont(Font):
     :class:`.NamedFont` is a subclass of :class:`.Font`; that is, all
     NamedFonts are Fonts, but not all Fonts are NamedFonts:
 
-    >>> isinstance(adca.NamedFont('toot'), adca.Font)
+    >>> isinstance(teek.NamedFont('toot'), teek.Font)
     True
-    >>> isinstance(adca.Font('Helvetica 12'), adca.NamedFont)
+    >>> isinstance(teek.Font('Helvetica 12'), teek.NamedFont)
     False
 
     If ``name`` is not given, Tk will choose a font name that is not in use
@@ -181,11 +182,11 @@ class NamedFont(Font):
     ``underline`` and ``overstrike`` attributes. For example, this...
     ::
 
-        shouting_font = adca.NamedFont(size=30, weight='bold')
+        shouting_font = teek.NamedFont(size=30, weight='bold')
 
     ...does the same thing as this::
 
-        shouting_font = adca.NamedFont()
+        shouting_font = teek.NamedFont()
         shouting_font.size = 30
         shouting_font.weight = 'bold'
     """

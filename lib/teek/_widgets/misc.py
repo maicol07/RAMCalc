@@ -14,11 +14,11 @@ class Button(ChildMixin, Widget):
     it will be treated so that this...
     ::
 
-        button = adca.Button(some_widget, "Click me", do_something)
+        button = teek.Button(some_widget, "Click me", do_something)
 
     ...does the same thing as this::
 
-        button = adca.Button(some_widget, "Click me")
+        button = teek.Button(some_widget, "Click me")
         button.config['command'].connect(do_something)
 
     See :meth:`.Callback.connect` documentation if you need to pass arguments
@@ -274,8 +274,8 @@ class Label(ChildMixin, Widget):
     """A widget that displays text.
 
     For convenience, the ``text`` option can be also given as a positional
-    initialization argument, so ``adca.Label(parent, "hello")`` and
-    ``adca.Label(parent, text="hello")`` do the same thing.
+    initialization argument, so ``teek.Label(parent, "hello")`` and
+    ``teek.Label(parent, text="hello")`` do the same thing.
 
     Manual page: :man:`ttk_label(3tk)`
     """
@@ -385,7 +385,7 @@ class Progressbar(ChildMixin, Widget):
     this...
     ::
 
-        progress_bar = adca.Progressbar(parent_widget, maximum=1)
+        progress_bar = teek.Progressbar(parent_widget, maximum=1)
 
     ...and then set numbers between 0 and 1 to
     ``progress_bar.config['value']``::
@@ -408,7 +408,7 @@ class Progressbar(ChildMixin, Widget):
             'length': teek.ScreenDistance,  # undocumented but true
             'maximum': float,
             'mode': str,
-            # 'phase': ???,
+            #'phase': ???,
             'value': float,
             'variable': teek.FloatVar,
         })
@@ -445,20 +445,20 @@ class Scrollbar(ChildMixin, Widget):
 
     For example::
 
-        import adca
+        import teek
 
-        window = adca.Window()
+        window = teek.Window()
 
-        text = adca.Text(window)
+        text = teek.Text(window)
         text.pack(side='left', fill='both', expand=True)
-        scrollbar = adca.Scrollbar(window)
+        scrollbar = teek.Scrollbar(window)
         scrollbar.pack(side='left', fill='y')
 
         text.config['yscrollcommand'].connect(scrollbar.set)  # 1.
         scrollbar.config['command'].connect(text.yview)       # 2.
 
-        window.on_delete_window.connect(adca.quit)
-        adca.run()
+        window.on_delete_window.connect(teek.quit)
+        teek.run()
 
     The value of the scrollbar's ``'command'`` option is a :class:`.Callback`
     that runs when the scrollbar is scrolled. It runs with arguments suitable
@@ -518,12 +518,12 @@ class Separator(ChildMixin, Widget):
     Create a horizontal separator like this...
     ::
 
-        separator = adca.Separator(some_widget, orient='horizontal')
+        separator = teek.Separator(some_widget, orient='horizontal')
         separator.pack(fill='x')    # default is side='top'
 
     ...and create a vertical separator like this::
 
-        separator = adca.Separator(some_widget, orient='vertical')
+        separator = teek.Separator(some_widget, orient='vertical')
         separator.pack(fill='y', side='left')   # can also use side='right'
 
     See :source:`examples/separator.py` for more example code.

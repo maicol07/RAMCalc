@@ -30,7 +30,7 @@ class Callback:
 
         >>> c = Callback()
         >>> c.connect(print, args=["hello", "world"])
-        >>> c.run()   adca
+        >>> c.run()   # runs print("hello", "world"), usually teek does this
         hello world
         >>> c.connect(print, args=["hello", "again"])
         >>> c.run()
@@ -63,7 +63,7 @@ class Callback:
         """
         stack = traceback.extract_stack()
 
-        # skip some adca implementation details, they are too verbose
+        # skip some teek implementation details, they are too verbose
         while stack and _is_from_teek(stack[-1]):
             del stack[-1]
 
@@ -387,7 +387,7 @@ class TclVariable:
 
     Use ``SomeUsableTclVarSubclass(name='asd')`` to create a variable object
     that represents a Tcl variable named ``asd``, or
-    ``SomeUsableTclVarSubclass()`` to let adca choose a variable name for
+    ``SomeUsableTclVarSubclass()`` to let teek choose a variable name for
     you.
 
     .. attribute:: type_spec
@@ -587,7 +587,7 @@ class Image:
         compatibility with Tk 8.5.
 
         If you want to create a program that can read as many different kinds
-        of images as possible, use :mod:`adca.extras.image_loader`.
+        of images as possible, use :mod:`teek.extras.image_loader`.
 
     Creating a new ``Image`` object with ``Image(...)`` calls
     ``image create photo`` followed by the options in Tcl. See
@@ -713,7 +713,7 @@ class Image:
 
         ...does the same thing as this::
 
-            image2 = adca.Image()
+            image2 = teek.Image()
             image2.copy_from(image1)
 
         Keyword arguments passed to ``image1.copy()`` are passed to

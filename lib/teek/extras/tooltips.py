@@ -2,6 +2,7 @@ import teek
 
 
 class _TooltipManager:
+
     # This needs to be shared by all instances because there's only one
     # mouse pointer.
     tipwindow = None
@@ -54,7 +55,7 @@ class _TooltipManager:
             tipwindow.geometry(x=(self.mousex + 10), y=(self.mousey - 10))
             tipwindow.bind('<Motion>', self.destroy_tipwindow)
 
-            # TODO: add overrideredirect to adca
+            # TODO: add overrideredirect to teek
             teek.tcl_call(None, 'wm', 'overrideredirect', tipwindow, 1)
 
             # i don't think there's a need to add better support for things

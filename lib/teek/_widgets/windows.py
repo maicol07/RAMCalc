@@ -6,6 +6,7 @@ from teek._structures import ConfigDict
 from teek._tcl_calls import make_thread_safe
 from teek._widgets.base import ChildMixin, Widget
 
+
 Geometry = collections.namedtuple('Geometry', 'width height x y')
 
 
@@ -152,8 +153,8 @@ class Toplevel(WmMixin, Widget):
 
         Examples::
 
-            >>> import adca
-            >>> window = adca.Window()
+            >>> import teek
+            >>> window = teek.Window()
             >>> window.geometry(300, 200)    # resize to 300px wide, 200px high
             >>> window.geometry(x=0, y=0)    # move to upper left corner
             >>> window.geometry()            # doctest: +SKIP
@@ -182,7 +183,7 @@ class Toplevel(WmMixin, Widget):
 
         These attributes and methods correspond to similarly named things in
         :man:`wm(3tk)`. Note that ``wm_state`` is ``state`` in the manual page;
-        the adca attribute is ``wm_state`` to make it explicit that it is
+        the teek attribute is ``wm_state`` to make it explicit that it is
         the wm state, not some other state.
 
         All of the attributes are settable, so you can do e.g.
@@ -303,7 +304,7 @@ class Window(WmMixin, Widget):
     ``'menu'`` option, so ``some_window.config['menu']`` uses the toplevel's
     menu option.
 
-    There is no manual page for this class because this is purely a adca
+    There is no manual page for this class because this is purely a teek
     feature; there is no ``window`` widget in Tk.
 
     .. seealso:: :class:`Toplevel`, :class:`Frame`

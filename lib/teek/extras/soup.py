@@ -8,7 +8,6 @@ import warnings
 
 import teek
 from teek.extras import links
-
 try:
     from teek.extras import image_loader
 except ImportError:
@@ -26,12 +25,12 @@ class SoupViewer:
         :meth:`download` if you don't want that.
 
         Images are loaded in threads, so make sure to use
-        :func:`adca.init_threads`. Alternatively, you can pass
+        :func:`teek.init_threads`. Alternatively, you can pass
         ``threads=False``, and the images won't be loaded at all.
 
     .. attribute:: widget
 
-        The :class:`adca.Text` widget that everything is added to.
+        The :class:`teek.Text` widget that everything is added to.
     """
 
     def __init__(self, textwidget, threads=True):
@@ -117,7 +116,7 @@ class SoupViewer:
         tag('soup-ol')
         tag('soup-ul')
 
-        # there's no soup-a because adca.extras.links handles that
+        # there's no soup-a because teek.extras.links handles that
         tag('soup-code')['font'] = (monospace_family, basic_size, '')
         tag('soup-pre')['font'] = (monospace_family, basic_size, '')
         tag('soup-pre')['lmargin1'] = 30
@@ -283,7 +282,7 @@ aracter
 
         mark_name = next(self._image_mark_names)
 
-        # TODO: add 'mark gravity' to adca
+        # TODO: add 'mark gravity' to teek
         self.widget.marks[mark_name + '-start'] = self.widget.end
         teek.tcl_call(None, self.widget, 'mark', 'gravity',
                       mark_name + '-start', 'left')

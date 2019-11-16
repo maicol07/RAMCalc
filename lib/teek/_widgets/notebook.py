@@ -51,7 +51,7 @@ class NotebookTab:
     if you create a tab like this...
     ::
 
-        tab = adca.NotebookTab(adca.Label(asd_notebook, "hello"))
+        tab = teek.NotebookTab(teek.Label(asd_notebook, "hello"))
 
     ...then the tab cannot be added to any other notebook widget than
     ``asd_notebook``, because ``asd_notebook`` is the parent widget of the
@@ -64,11 +64,11 @@ class NotebookTab:
     :class:`.NotebookTab`, so that this...
     ::
 
-        notebook.append(adca.NotebookTab(some_widget, text="Tab Title"))
+        notebook.append(teek.NotebookTab(some_widget, text="Tab Title"))
 
     ...does the same thing as this::
 
-        tab = adca.NotebookTab(some_widget, text="Tab Title")
+        tab = teek.NotebookTab(some_widget, text="Tab Title")
         notebook.append(tab)
         tab.config['text'] = "Tab Title"
 
@@ -145,17 +145,17 @@ class Notebook(ChildMixin, Widget, collections.abc.MutableSequence):
     If you try to add a tab that is already in the notebook, that tab will be
     moved. For example:
 
-    >>> notebook = adca.Notebook(adca.Window())
-    >>> tab1 = adca.NotebookTab(adca.Label(notebook, text="1"), text="One")
-    >>> tab2 = adca.NotebookTab(adca.Label(notebook, text="2"), text="Two")
+    >>> notebook = teek.Notebook(teek.Window())
+    >>> tab1 = teek.NotebookTab(teek.Label(notebook, text="1"), text="One")
+    >>> tab2 = teek.NotebookTab(teek.Label(notebook, text="2"), text="Two")
     >>> notebook.extend([tab1, tab2])
     >>> list(notebook)      # doctest: +NORMALIZE_WHITESPACE
-    [NotebookTab(<adca.Label widget: text='1'>, text='One'),
-     NotebookTab(<adca.Label widget: text='2'>, text='Two')]
+    [NotebookTab(<teek.Label widget: text='1'>, text='One'),
+     NotebookTab(<teek.Label widget: text='2'>, text='Two')]
     >>> notebook.append(notebook[0])
     >>> list(notebook)      # doctest: +NORMALIZE_WHITESPACE
-    [NotebookTab(<adca.Label widget: text='2'>, text='Two'),
-     NotebookTab(<adca.Label widget: text='1'>, text='One')]
+    [NotebookTab(<teek.Label widget: text='2'>, text='Two'),
+     NotebookTab(<teek.Label widget: text='1'>, text='One')]
 
     For doing advanced magic, you can create a new class that inherits from
     :class:`.Notebook`. Here are some facts that can be useful when deciding
@@ -207,14 +207,14 @@ class Notebook(ChildMixin, Widget, collections.abc.MutableSequence):
 
         If there is no tab with the given widget, a new tab is created.
 
-        >>> notebook = adca.Notebook(adca.Window())
-        >>> label = adca.Label(notebook, text='lol')
-        >>> tab = adca.NotebookTab(label)
+        >>> notebook = teek.Notebook(teek.Window())
+        >>> label = teek.Label(notebook, text='lol')
+        >>> tab = teek.NotebookTab(label)
         >>> notebook.append(tab)
         >>> tab
-        NotebookTab(<adca.Label widget: text='lol'>)
+        NotebookTab(<teek.Label widget: text='lol'>)
         >>> notebook.get_tab_by_widget(label)
-        NotebookTab(<adca.Label widget: text='lol'>)
+        NotebookTab(<teek.Label widget: text='lol'>)
         """
         try:
             return self._tab_objects[widget]

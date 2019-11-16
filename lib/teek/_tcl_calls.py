@@ -1,4 +1,3 @@
-import _tkinter
 import collections
 import functools
 import itertools
@@ -7,13 +6,14 @@ import queue
 import sys
 import threading
 import traceback
+import _tkinter
 
 import teek
 
 _flatten = itertools.chain.from_iterable
 
 
-# "converting errors" means raising adca's TclError when _tkinter raises
+# "converting errors" means raising teek's TclError when _tkinter raises
 # its TclError
 def _raise_converted_error(tkinter_error):
     raise (teek.TclError(str(tkinter_error))
@@ -225,16 +225,16 @@ def quit():
 
     This function calls ``destroy .`` in Tcl, and that's documented in
     :man:`destroy(3tk)`. Note that this function does not tell Python to quit;
-    only adca quits, so you can do this::
+    only teek quits, so you can do this::
 
-        import adca
+        import teek
 
-        window = adca.Window()
-        adca.Button(window, "Quit", adca.quit).pack()
-        adca.run()
+        window = teek.Window()
+        teek.Button(window, "Quit", teek.quit).pack()
+        teek.run()
         print("Still alive")
 
-    If you click the button, it interrupts ``adca.run()`` and the print runs.
+    If you click the button, it interrupts ``teek.run()`` and the print runs.
     """
     global _interp
 
@@ -256,17 +256,17 @@ def quit():
 
 
 def run():
-    """Runs the event loop until :func:`~adca.quit` is called."""
+    """Runs the event loop until :func:`~teek.quit` is called."""
     _get_interp().run()
 
 
 def init_threads(poll_interval_ms=50):
-    """Allow using adca from other threads than the main thread.
+    """Allow using teek from other threads than the main thread.
 
     This is implemented with a queue. This function starts an
     :ref:`after callback <after-cb>` that checks for new messages in the queue
     every 50 milliseconds (that is, 20 times per second), and when another
-    thread calls a adca function that does a :ref:`Tcl call <tcl-calls>`,
+    thread calls a teek function that does a :ref:`Tcl call <tcl-calls>`,
     the information required for making the Tcl call is put to the queue and
     the Tcl call is done by the after callback.
 
@@ -284,7 +284,7 @@ def init_threads(poll_interval_ms=50):
     * Use a smaller ``poll_interval_ms``. Watch your CPU usage though; if you
       make ``poll_interval_ms`` too small, you might get 100% CPU usage when
       your program is doing nothing.
-    * Try to rewrite the program so that it does less adca stuff in threads.
+    * Try to rewrite the program so that it does less teek stuff in threads.
     """
     _get_interp().init_threads()
 
@@ -295,8 +295,8 @@ def make_thread_safe(func):
     Functions decorated with this always run in the event loop, and therefore
     in the main thread.
 
-    Most of the time you don't need to use this yourself; adca uses this a
-    lot internally, so most adca things are already thread safe. However, if
+    Most of the time you don't need to use this yourself; teek uses this a
+    lot internally, so most teek things are already thread safe. However, if
     you have code like this...
     ::
 
@@ -305,10 +305,10 @@ def make_thread_safe(func):
             func2()
             func3()
 
-    ...where ``func1``, ``func2`` and ``func3`` do adca things and you need
+    ...where ``func1``, ``func2`` and ``func3`` do teek things and you need
     to call ``func123`` from a thread, it's best to decorate ``func123``::
 
-        @adca.make_thread_safe
+        @teek.make_thread_safe
         def good_func123():
             func1()
             func2()
@@ -316,7 +316,7 @@ def make_thread_safe(func):
 
     This may make ``func123`` noticably faster. If a function decorated with
     ``make_thread_safe()`` is called from some other thread than the main
-    thread, it needs to communicate between the main thread and adca's event
+    thread, it needs to communicate between the main thread and teek's event
     loop, which is slow. However, with ``good_func123``, there isn't much
     communication to do: the other thread needs to tell the main thread to run
     the function, and later the main thread tells the other thread that the
@@ -328,11 +328,10 @@ def make_thread_safe(func):
         they are ran in the event loop. In other words, this code is bad,
         because it will freeze the GUI for about 5 seconds::
 
-            @adca.make_thread_safe
+            @teek.make_thread_safe
             def do_stuff():
                 time.sleep(5)
     """
-
     @functools.wraps(func)
     def safe(*args, **kwargs):
         return _get_interp().call_thread_safely(func, args, kwargs,
@@ -446,16 +445,16 @@ def tcl_call(returntype, command, *arguments):
 
     The arguments are passed correctly, even if they contain spaces:
 
-    >>> adca.tcl_eval(None, 'puts "hello world thing"')  # 1 arguments to puts\
+    >>> teek.tcl_eval(None, 'puts "hello world thing"')  # 1 arguments to puts\
         # doctest: +SKIP
     hello world thing
     >>> message = 'hello world thing'
-    >>> adca.tcl_eval(None, 'puts %s' % message)  # 3 args to puts, tcl error
+    >>> teek.tcl_eval(None, 'puts %s' % message)  # 3 args to puts, tcl error
     Traceback (most recent call last):
         ...
-    adca.TclError: wrong # args: should be "puts ?-nonewline? ?channelId? \
+    teek.TclError: wrong # args: should be "puts ?-nonewline? ?channelId? \
 string"
-    >>> adca.tcl_call(None, 'puts', message)   # 1 arg to puts\
+    >>> teek.tcl_call(None, 'puts', message)   # 1 arg to puts\
         # doctest: +SKIP
     hello world thing
     """
@@ -466,10 +465,10 @@ string"
 def tcl_eval(returntype, code):
     """Run a string of Tcl code.
 
-    >>> adca.tcl_eval(None, 'proc add {a b} { return [expr $a + $b] }')
-    >>> adca.tcl_eval(int, 'add 1 2')
+    >>> teek.tcl_eval(None, 'proc add {a b} { return [expr $a + $b] }')
+    >>> teek.tcl_eval(int, 'add 1 2')
     3
-    >>> adca.tcl_call(int, 'add', 1, 2)     # usually this is better, see below
+    >>> teek.tcl_call(int, 'add', 1, 2)     # usually this is better, see below
     3
     """
     result = _get_interp().eval(code)
@@ -497,12 +496,12 @@ def create_command(func, arg_type_specs=(), *, extra_args_type=None):
 
     Here is a simple example:
 
-    >>> tcl_print = adca.create_command(print, [str])  # calls print(a_string)
+    >>> tcl_print = teek.create_command(print, [str])  # calls print(a_string)
     >>> tcl_print       # doctest: +SKIP
     'teek_command_1'
-    >>> adca.tcl_call(None, tcl_print, 'hello world')
+    >>> teek.tcl_call(None, tcl_print, 'hello world')
     hello world
-    >>> adca.tcl_eval(None, '%s "hello world"' % tcl_print)
+    >>> teek.tcl_eval(None, '%s "hello world"' % tcl_print)
     hello world
 
     Created commands should be deleted with :func:`.delete_command` when they
@@ -522,8 +521,8 @@ def create_command(func, arg_type_specs=(), *, extra_args_type=None):
     ...     for arg in args:
     ...         print(arg)
     ...
-    >>> command = adca.create_command(func, [int, int], extra_args_type=str)
-    >>> adca.tcl_call(None, command, 123, 23, 'asd', 'toot', 'boom boom')
+    >>> command = teek.create_command(func, [int, int], extra_args_type=str)
+    >>> teek.tcl_call(None, command, 123, 23, 'asd', 'toot', 'boom boom')
     100
     asd
     toot

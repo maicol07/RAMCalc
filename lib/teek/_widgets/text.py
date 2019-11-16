@@ -69,7 +69,7 @@ class Tag(CgetConfigureConfigDict):
             # 'bgstipple': ???,
             'borderwidth': teek.ScreenDistance,
             'elide': bool,
-            # 'fgstipple': ???,
+            #'fgstipple': ???,
             'font': teek.Font,
             'foreground': teek.Color,
             'justify': str,
@@ -234,8 +234,8 @@ class Text(ChildMixin, Widget):
 
         Note that ``end`` changes when the text widget's content changes:
 
-        >>> window = adca.Window()
-        >>> text = adca.Text(window)
+        >>> window = teek.Window()
+        >>> text = teek.Text(window)
         >>> text.end
         TextIndex(line=1, column=0)
         >>> old_end = text.end

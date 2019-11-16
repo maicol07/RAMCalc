@@ -9,7 +9,7 @@ try:
     import reportlab.graphics.renderPM
     from svglib import svglib
 except ImportError as e:
-    raise ImportError(str(e) + ". Maybe try 'pip install adca[image_loader]' "
+    raise ImportError(str(e) + ". Maybe try 'pip install teek[image_loader]' "
                                "to fix this?").with_traceback(e.__traceback__) from None
 
 import teek
@@ -20,7 +20,7 @@ from teek.extras.image_loader_dummy import from_pil
 
 
 def from_file(file):
-    """Creates a :class:`adca.Image` from a file object.
+    """Creates a :class:`teek.Image` from a file object.
 
     The file object must be readable, and it must be in bytes mode. It must
     have ``read()``, ``seek()`` and ``tell()`` methods. For example, files from
@@ -30,7 +30,7 @@ def from_file(file):
 
     Example::
 
-        from adca.extras import image_loader
+        from teek.extras import image_loader
 
         with open(the_image_path, 'rb') as file:
             image = image_loader.from_file(file)
@@ -62,7 +62,7 @@ def from_file(file):
 
 def from_bytes(bytes_):
     """
-    Creates a :class:`adca.Image` from bytes that would normally be in an image
+    Creates a :class:`teek.Image` from bytes that would normally be in an image
     file.
 
     Example::
