@@ -3,7 +3,7 @@ from teek._tcl_calls import make_thread_safe
 
 
 # there's no after_info because i don't see how it would be useful in
-# adca
+# teek
 
 class _Timeout:
 

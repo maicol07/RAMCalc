@@ -6,8 +6,8 @@ import operator
 import re
 
 import teek
-from teek._structures import ConfigDict, CgetConfigureConfigDict, after_quit
 from teek._tcl_calls import counts, from_tcl, make_thread_safe
+from teek._structures import ConfigDict, CgetConfigureConfigDict, after_quit
 
 _widgets = {}
 _class_bindings = {}
@@ -135,15 +135,15 @@ class Widget:
 
     Don't create instances of ``Widget`` yourself like ``Widget(...)``; use one
     of the classes documented below instead. However, you can use ``Widget``
-    with :func:`isinstance`; e.g. ``isinstance(thingy, adca.Widget)`` returns
-    ``True`` if ``thingy`` is a adca widget.
+    with :func:`isinstance`; e.g. ``isinstance(thingy, teek.Widget)`` returns
+    ``True`` if ``thingy`` is a teek widget.
 
     .. attribute:: config
 
         A dict-like object that represents the widget's options.
 
-        >>> window = adca.Window()
-        >>> label = adca.Label(window, text='Hello World')
+        >>> window = teek.Window()
+        >>> label = teek.Label(window, text='Hello World')
         >>> label.config
         <a config object, behaves like a dict>
         >>> label.config['text']
@@ -172,8 +172,8 @@ class Widget:
         .. note::
             Only Ttk widgets have states, and this attribute is set to None for
             non-Ttk widgets. If you don't know what Ttk is, you should read
-            about it in :ref:`the adca tutorial <tcl-tk-tkinter-adca>`.
-            Most adca widgets are ttk widgets, but some aren't, and that's
+            about it in :ref:`the teek tutorial <tcl-tk-tkinter-teek>`.
+            Most teek widgets are ttk widgets, but some aren't, and that's
             mentioned in the documentation of those widgets.
 
     .. attribute:: tk_class_name
@@ -183,26 +183,26 @@ class Widget:
         This is a class attribute, but it can be accessed from instances as
         well:
 
-        >>> text = adca.Text(adca.Window())
+        >>> text = teek.Text(teek.Window())
         >>> text.tk_class_name
         'Text'
-        >>> adca.Text.tk_class_name
+        >>> teek.Text.tk_class_name
         'Text'
 
         Note that Tk's class names are sometimes different from the names of
         Python classes, and this attribute can also be None in some special
         cases.
 
-        >>> adca.Label.tk_class_name
+        >>> teek.Label.tk_class_name
         'TLabel'
-        >>> class AsdLabel(adca.Label):
+        >>> class AsdLabel(teek.Label):
         ...     pass
         ...
         >>> AsdLabel.tk_class_name
         'TLabel'
-        >>> print(adca.Window.tk_class_name)
+        >>> print(teek.Window.tk_class_name)
         None
-        >>> print(adca.Widget.tk_class_name)
+        >>> print(teek.Widget.tk_class_name)
         None
 
     .. attribute:: command_list
@@ -345,8 +345,8 @@ class Widget:
         ``Widget`` subclass than what the type of the ``path_string`` widget
         is:
 
-        >>> window = adca.Window()
-        >>> adca.Button.from_tcl(adca.Label(window).to_tcl())  \
+        >>> window = teek.Window()
+        >>> teek.Button.from_tcl(teek.Label(window).to_tcl())  \
 # doctest: +ELLIPSIS
         Traceback (most recent call last):
             ...
@@ -369,7 +369,7 @@ class Widget:
     def __repr__(self):
         class_name = type(self).__name__
         if getattr(teek, class_name, None) is type(self):
-            result = 'adca.%s widget' % class_name
+            result = 'teek.%s widget' % class_name
         else:
             result = '{0.__module__}.{0.__name__} widget'.format(type(self))
 
@@ -419,31 +419,31 @@ class Widget:
             Don't override this in a subclass. In some cases, the widget is
             destroyed without a call to this method.
 
-            >>> class BrokenFunnyLabel(adca.Label):
+            >>> class BrokenFunnyLabel(teek.Label):
             ...     def destroy(self):
             ...         print("destroying")
             ...         super().destroy()
             ...
-            >>> BrokenFunnyLabel(adca.Window()).pack()
-            >>> adca.quit()
+            >>> BrokenFunnyLabel(teek.Window()).pack()
+            >>> teek.quit()
             >>> # nothing was printed!
 
             Use the ``<Destroy>`` event instead:
 
-            >>> class WorkingFunnyLabel(adca.Label):
+            >>> class WorkingFunnyLabel(teek.Label):
             ...     def __init__(self, *args, **kwargs):
             ...         super().__init__(*args, **kwargs)
             ...         self.bind('<Destroy>', self._destroy_callback)
             ...     def _destroy_callback(self):
             ...         print("destroying")
             ...
-            >>> WorkingFunnyLabel(adca.Window()).pack()
-            >>> adca.quit()
+            >>> WorkingFunnyLabel(teek.Window()).pack()
+            >>> teek.quit()
             destroying
         """
         for name in self._call([str], 'winfo', 'children', self):
             # allow overriding the destroy() method if the widget was
-            # created by adca
+            # created by teek
             if name in _widgets:
                 _widgets[name]._destroy_recurser()
             else:
@@ -674,7 +674,7 @@ et`.
         As usual, options are given without dashes as keyword arguments, so Tcl
         code like ``event generate $widget <SomeEvent> -data $theData`` looks
         like ``widget.event_generate('<SomeEvent>', data=the_data)`` in
-        adca.
+        teek.
         """
         option_args = []
         for name, value in kwargs.items():
@@ -785,7 +785,7 @@ class BindingDict(collections.abc.Mapping):
                     # bind(3tk) says that %E is 1 or 0
                     value = None
                 else:  # pragma: no cover
-                    raise e  # if this runs, there's a bug in adca
+                    raise e  # if this runs, there's a bug in teek
 
             setattr(event, attrib, value)
 
@@ -840,7 +840,7 @@ class ChildMixin:
             args.append('-' + name)
             args.append(value)
 
-        # special case: tkinter does nothing (lol), adca would give a
+        # special case: tkinter does nothing (lol), teek would give a
         # noob-unfriendly TclError otherwise
         if geometry_manager == 'place' and not args:
             raise TypeError(

@@ -1,7 +1,7 @@
 import functools
 import webbrowser
 
-_TAG_PREFIX = 'adca-extras-link-'
+_TAG_PREFIX = 'teek-extras-link-'
 
 
 def _init_links(widget):
@@ -59,7 +59,7 @@ def add_url_link(textwidget, url, start, end):
 
     Do this if you want to insert some text and make it a link immediately::
 
-        from adca.extras import links
+        from teek.extras import links
 
         ...
 

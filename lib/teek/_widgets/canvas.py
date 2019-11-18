@@ -2,8 +2,8 @@ import collections.abc
 import functools
 
 import teek
-from teek._structures import CgetConfigureConfigDict
 from teek._widgets.base import Widget, ChildMixin
+from teek._structures import CgetConfigureConfigDict
 
 
 # you can also make a list of canvas items instead of tagging, but there are

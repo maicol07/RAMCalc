@@ -27,12 +27,12 @@ class MenuItem:
 
     Here's an example:
 
-    >>> item = adca.MenuItem("Click me", print)
+    >>> item = teek.MenuItem("Click me", print)
     >>> item.config['label'] = "New text"
     Traceback (most recent call last):
         ...
     RuntimeError: the MenuItem hasn't been added to a Menu yet
-    >>> menu = adca.Menu()
+    >>> menu = teek.Menu()
     >>> menu.append(item)
     >>> item.config['label'] = "New text"
     >>> item.config['label']
@@ -47,7 +47,7 @@ class MenuItem:
         example, the ``'command'`` of a :class:`.Button` widget is a
         :class:`.Callback` object connected to a function passed to
         :class:`.Button`, and so is the ``'command'`` of
-        ``adca.MenuItem("Click me", some_function)``.
+        ``teek.MenuItem("Click me", some_function)``.
 
     .. attribute:: type
 
@@ -175,16 +175,16 @@ class Menu(Widget, collections.abc.MutableSequence):
     treated so that this...
     ::
 
-        menu = adca.Menu([
-            adca.MenuItem("Click me", print),
-            adca.MenuItem("No, click me instead", print),
+        menu = teek.Menu([
+            teek.MenuItem("Click me", print),
+            teek.MenuItem("No, click me instead", print),
         ])
 
     ...does the same thing as this::
 
-        menu = adca.Menu()
-        menu.append(adca.MenuItem("Click me", print))
-        menu.append(adca.MenuItem("No, click me instead", print))
+        menu = teek.Menu()
+        menu.append(teek.MenuItem("Click me", print))
+        menu.append(teek.MenuItem("No, click me instead", print))
 
     Menu widgets behave like lists of menu items, so if you can do something to
     a list of :class:`.MenuItem` objects, you can probably do it directly to a
@@ -192,12 +192,12 @@ class Menu(Widget, collections.abc.MutableSequence):
 
     However, menu widgets don't support slicing, like lists do:
 
-    >>> menu = adca.Menu([
-    ...     adca.MenuItem("Click me", print),
+    >>> menu = teek.Menu([
+    ...     teek.MenuItem("Click me", print),
     ... ])
-    >>> menu.append(adca.MenuItem("No, click me instead", print))
+    >>> menu.append(teek.MenuItem("No, click me instead", print))
     >>> menu
-    <adca.Menu widget: contains 2 items>
+    <teek.Menu widget: contains 2 items>
     >>> menu[0]     # this works
     <MenuItem('Click me', <built-in function print>): type='command', added to\
  a menu>
@@ -218,12 +218,12 @@ d', added to a menu>
     :class:`.Menu` objects assume that nothing changes the underlying Tk menu
     widget without the :class:`.Menu` object. For example:
 
-    >>> menu = adca.Menu()
+    >>> menu = teek.Menu()
     >>> command = menu.to_tcl()
     >>> command      # doctest: +SKIP
     '.menu1'
     >>> # DON'T DO THIS, this is a bad idea
-    >>> adca.tcl_eval(None, '%s add checkbutton -command {puts hello}' % comma\
+    >>> teek.tcl_eval(None, '%s add checkbutton -command {puts hello}' % comma\
 nd)
     >>> len(menu)   # the menu widget doesn't know that we added an item
     0
