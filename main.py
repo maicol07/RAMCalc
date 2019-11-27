@@ -1,5 +1,4 @@
 import sys
-
 sys.path.insert(0, 'lib')
 
 from lib import teek
@@ -35,7 +34,8 @@ e.grid(row=0, column=0, columnspan=3)
 
 mf = teek.Frame(w)
 mf.grid(row=1, column=0, rowspan=2)
-math_functions = ["sin", "cos", "tan", "sqrt", "log"]
+math_functions = ["sin", "cos", "tan", "sqrt", "log", "loga(b)",
+                  "ln", "x^2", "x^3", "x^n"]
 buttons(mf, math_functions)
 
 nf = teek.Frame(w)
