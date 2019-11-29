@@ -9,29 +9,31 @@ def Risposta(r):
     trova4 = r.find("sqrt")
     if trova!=(-1):
         l=r.split("+")
-        for e,p in enumerate(l):
+        for p,e in enumerate(l):
             l[p]=int(e)
         risultato=sum(l)
     if trova1!=(-1):
         l=r.split("-")
-        for e,p in enumerate(l):
+        for p,e in enumerate(l):
             l[p]=int(e)
             if p != 0:
                 l[p] = -int(e)
         risultato=sum(l)
     if trova2!=(-1):
         l=r.split("*")
-        for e,p in enumerate(l):
+        for p,e in enumerate(l):
             l[p]=int(e)
         risultato=1
         for x in l:
             risultato=risultato*x
     if trova3!=(-1):
         l=r.split("/")
-        for e,p in enumerate(l):
+        for p,e in enumerate(l):
             l[p]=int(e)
         risultato=l[0]
-        for x in l:
+        for p,x in enumerate(l):
+            if p == 0:
+                continue
             risultato=risultato/x
     if trova4!=(-1):
         l=r.split("sqrt")
