@@ -21,6 +21,7 @@ class Style:
 
         self.__db = db
         self.style = ThemedStyle()
+        s = self.style
         self.bgcolor = self.style.lookup("TButton", "background", default="white")
         self.change_window_bg(root)
         try:
@@ -128,3 +129,17 @@ class Style:
             return self.current_font
         else:
             return 'default'
+
+
+def change_window_bg(w):
+    """
+    Modifica lo sfondo della finestra passata come parametro e la aggiunge alla lista di quelle già aperte, se non
+    è già stata inserita
+
+    :param w:
+    :return:
+    """
+    bgcolor = s.lookup("TButton", "background", default="white")
+    if bgcolor == "SystemButtonFace":
+        bgcolor = "white"
+    w.configure(background=bgcolor)

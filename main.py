@@ -9,9 +9,9 @@ import_pil()
 
 from tkinter import *
 from tkinter.ttk import *
-import tkinter.simpledialog
+from lib.ttkSimpleDialog import ttkSimpleDialog
 from lib.medoo import Medoo
-import src.Style
+
 import Mediatore
 from modules.settings import *
 
@@ -25,11 +25,37 @@ db.connection.executescript(query.read())
 query.close()
 
 
-def sendToServer(e):
-    Mediatore.invia(e.widget.get(), ip)
+def sendToServer(entry):
+    data = entry.get()
+    if not data:
+        return
+    Mediatore.invia(data)
+    risp = Mediatore.ricevi()
+    writeToEntry(risp, True)
 
-def writeToEntry(text):
-    e.insert("end", text)
+
+def writeToEntry(text, delete=False):
+    if delete:
+        e.delete(0, END)
+    e.insert(END, text)
+    e.focus_set()
+
+
+def ip(initialvalue=""):
+    Mediatore.chiuditutto()
+    ip = ttkSimpleDialog.askstring("Indirizzo IP",
+                                   "Digita l'indirizzo IP del server. Se il server è sul tuo computer digita "
+                                   "localhost o 127.0.0.1.\nSe premi Annulla o non immetti nulla verrà avviato il "
+                                   "server interno.",
+                                   parent=w, initialvalue=initialvalue)
+    process = None
+    if ip is None or ip == "":
+        import subprocess
+        process = subprocess.Popen("python server.py --localhost", shell=True, stdout=subprocess.PIPE)
+        ip = "127.0.0.1"
+    Mediatore.connetti(ip)
+    return ip, process
+
 
 def buttons(frame, l, column_limit=3):
     """
@@ -52,7 +78,9 @@ def buttons(frame, l, column_limit=3):
             text = i
         else:
             text = l[i]
-        b = Button(frame, text=text, command=lambda: writeToEntry(text))
+        b = Button(frame, text=text, command=lambda text=text: writeToEntry(text))
+        if text == "=":
+            b.configure(command=lambda: sendToServer(e))
         b.grid(row=r, column=c)
         tk_elements[i] = b
         c += 1
@@ -65,18 +93,12 @@ def buttons(frame, l, column_limit=3):
 w = Tk()
 w.title("RAMCalc")
 w.iconphoto(True, PhotoImage(file="img/logo.png"))
+w.resizable(False, False)
 
-ip = tkinter.simpledialog.askstring("Indirizzo IP",
-                                    "Digita l'indirizzo IP del server. Se il server è sul tuo computer digita "
-                                    "localhost o 127.0.0.1.\nSe premi Annulla o non immetti nulla verrà avviato il "
-                                    "server interno.",
-                                    parent=w)
-if ip is None:
-    import subprocess
-    process = subprocess.Popen("server.py", shell=True, stdout=subprocess.PIPE)
-    ip = "127.0.0.1"
 # ===== IMPOSTAZIONE STILE ===== #
 s = src.Style.Style(db, w)
+
+ip_address, server = ip()
 
 m = Menu(w)
 w.config(menu=m)
@@ -91,6 +113,9 @@ m.add_cascade(label="Impostazioni", menu=om)
 brush_image = PhotoImage(master=om, file="img/settings.png")
 om.add_command(label="Apri impostazioni", image=brush_image,
                compound="left", command=lambda: Impostazioni(db, s))
+plug_image = PhotoImage(master=om, file="img/plug.png")
+om.add_command(label="Connetti ad un server...", image=plug_image,
+               compound="left", command=lambda: ip(ip_address))
 m.add_cascade(label="Aiuto", menu=hm)
 info_image = PhotoImage(master=hm, file="img/info.png")
 hm.add_command(label="Informazioni", image=info_image,
@@ -101,21 +126,21 @@ hm.add_command(label="Informazioni", image=info_image,
 
 e = Entry(w)
 e.grid(row=0, column=0, columnspan=3, sticky="nsew")
-e.bind('<Return>', sendToServer)
-
-mf = Frame(w)
-mf.grid(row=1, column=0, rowspan=2)
-math_functions = ["sin", "cos", "tan", "sqrt", "log", "loga(b)", "ln", "x²", "x³", "x^n", "|x|", "("]
-buttons(mf, math_functions)
+e.bind('<Return>', lambda e: sendToServer(e.widget))
+e.bind('*', lambda event: writeToEntry("×"))
+e.bind('/', lambda event: writeToEntry("÷"))
 
 nf = Frame(w)
 nf.grid(row=1, column=1)
-buttons(nf, list(range(1, 10)) + [")", 0, "="])
+buttons(nf, list(range(1, 10)) + ["√", 0, "="])
 
 operators = ["+", "-", "×", "÷"]
 of = Frame(w)
 of.grid(row=1, column=2, rowspan=2)
 buttons(of, operators, column_limit=1)
 
+e.focus_set()
 w.mainloop()
 db.close()  # Chiusura database
+if server is not None:
+    server.kill()
