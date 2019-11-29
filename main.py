@@ -12,6 +12,7 @@ from tkinter.ttk import *
 import tkinter.simpledialog
 from lib.medoo import Medoo
 import src.Style
+import Mediatore
 from modules.settings import *
 
 # Apertura database (viene creato se non esiste già il file) e creazione tabelle se non esistono già
@@ -23,6 +24,9 @@ query = open("tables.sql")
 db.connection.executescript(query.read())
 query.close()
 
+
+def sendToServer(e):
+    Mediatore.invia(e.widget.get(), ip)
 
 def writeToEntry(text):
     e.insert("end", text)
@@ -69,9 +73,8 @@ ip = tkinter.simpledialog.askstring("Indirizzo IP",
                                     parent=w)
 if ip is None:
     import subprocess
-
     process = subprocess.Popen("server.py", shell=True, stdout=subprocess.PIPE)
-    ip = "localhost"
+    ip = "127.0.0.1"
 # ===== IMPOSTAZIONE STILE ===== #
 s = src.Style.Style(db, w)
 
@@ -96,8 +99,9 @@ hm.add_command(label="Informazioni", image=info_image,
                                                                       "e li elabora in operazioni matematiche, restituendoli ad un altro "
                                                                       "computer.\nRealizzato da maicol07, RichiMassa1 e alecoma"))
 
-e = Text(w, height=1)
-e.grid(row=0, column=0, columnspan=3)
+e = Entry(w)
+e.grid(row=0, column=0, columnspan=3, sticky="nsew")
+e.bind('<Return>', sendToServer)
 
 mf = Frame(w)
 mf.grid(row=1, column=0, rowspan=2)
