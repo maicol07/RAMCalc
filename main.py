@@ -51,7 +51,10 @@ def ip(initialvalue=""):
     process = None
     if ip is None or ip == "":
         import subprocess
-        process = subprocess.Popen("python server.py --localhost", shell=True, stdout=subprocess.PIPE)
+        try:
+            process = subprocess.check_call("python server.py --localhost", shell=True, stdout=subprocess.PIPE)
+        except subprocess.CalledProcessError:  # Support for Python 3.5
+            process = subprocess.Popen("py server.py --localhost", shell=True, stdout=subprocess.PIPE)
         ip = "127.0.0.1"
     Mediatore.connetti(ip)
     return ip, process

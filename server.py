@@ -58,7 +58,7 @@ try:
 except IndexError:
     pass
 s.bind((ip, 8888))
-print(f"L'indirizzo ip di questo server è: {ip}")
+print("L'indirizzo ip di questo server è: {}".format(ip))
 s.listen(100)
 conn, ip_client = s.accept()
 while True:
