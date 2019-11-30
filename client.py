@@ -1,3 +1,44 @@
+'''
+# RAMCalc
+###### A simple calculator
+
+Questo programma interpreta dati passati da un computer
+e li elabora in operazioni matematiche, restituendoli ad un altro computer.
+
+Permette le seguenti operazioni:
+- Addizione
+- Sottrazione
+- Moltiplicazione
+- Divisione
+- Radice quadrata
+
+**ATTENZIONE: Per mancanza di tempo, non è possibile inserire espressioni
+all'interno del calcolatore (Funzionalità non realizzata)**
+
+È possibile immettere i numeri e i vari operatori tramite i pulsanti della
+GUI o attraverso la tastiera fisica del dispositivo (in questo caso, quando
+si preme `INVIO` si otterrà lo stesso risultato della pressione del tasto `=`)
+
+Altre funzioni dell'interfaccia grafica incorporata includono:
+- Selezione tema della GUI
+- Selezione del carattere utilizzato nella GUI
+- Collegamento ad un altro server o riconnessione allo stesso
+- Finestra informazioni su RAMCalc
+
+Contributi dei singoli:
+- maicol07 (_Maicol Battistini_):
+    - GUI
+    - Impostazioni (Temi, carattere)
+    - Opzione collegamento ad un server differente
+    - Cronologia
+    - Finestra informazioni
+    - Design del software
+    - Integrazione librerie esterne
+    - Interazione con il database per il salvataggio del tema, del carattere e della cronologia
+- RichiMassa1 (_Riccardo Massari_): Client (connessione iniziale con il server
+ed invio dati), Server (alcune operazioni)
+- alecoma (_Alessia Comandini_): Server
+'''
 import sys
 import os
 
@@ -14,6 +55,7 @@ from lib.medoo import Medoo
 
 import Mediatore
 from modules.settings import *
+from modules.Cronologia import cronologia
 
 # Apertura database (viene creato se non esiste già il file) e creazione tabelle se non esistono già
 if not (os.path.exists(os.path.expanduser('~/Documents/RAMCalc'))):
@@ -31,14 +73,34 @@ def sendToServer(entry):
         return
     Mediatore.invia(data)
     risp = Mediatore.ricevi()
-    writeToEntry(risp, True)
+    writeToEntry(risp, delete=True, reenable_others=True)
 
 
-def writeToEntry(text, delete=False):
+def writeToEntry(text, delete=False, pressed=False, disable_others=False, reenable_others=False):
     if delete:
         e.delete(0, END)
+    if text in operators + ['√'] and str(btns[text]['state']) == 'disabled':
+        return 'break'
     e.insert(END, text)
     e.focus_set()
+    if disable_others:
+        for t, btn in btns.items():
+            if t == text or btn['text'] == text:
+                continue
+            btn.configure(state=DISABLED)
+        if '√' in e.get():
+            btns['√'].configure(state=DISABLED)
+    if reenable_others:
+        l = []
+        for i in operators + ['√']:
+            if i in e.get()[:-1]:
+                l.append(i)
+        for t, btn in btns.items():
+            if not btn['text'] in l and l or '√' in e.get()[:-1]:
+                continue
+            btn.configure(state=NORMAL)
+    if pressed:
+        return "break"
 
 
 def ip(initialvalue=""):
@@ -51,10 +113,11 @@ def ip(initialvalue=""):
     process = None
     if ip is None or ip == "":
         import subprocess
-        try:
-            process = subprocess.check_call("python server.py --localhost", shell=True, stdout=subprocess.PIPE)
-        except subprocess.CalledProcessError:  # Support for Python 3.5
-            process = subprocess.Popen("py server.py --localhost", shell=True, stdout=subprocess.PIPE)
+        if sys.version_info.minor > 5:
+            cmd = 'python'
+        else:
+            cmd = 'py'
+        process = subprocess.Popen("{} server.py --localhost".format(cmd), shell=True, stdout=subprocess.DEVNULL)
         ip = "127.0.0.1"
     Mediatore.connetti(ip)
     return ip, process
@@ -81,10 +144,16 @@ def buttons(frame, l, column_limit=3):
             text = i
         else:
             text = l[i]
-        b = Button(frame, text=text, command=lambda text=text: writeToEntry(text))
+        if text not in operators + ['√']:
+            disable = False
+        else:
+            disable = True
+        b = Button(frame, text=text, command=lambda text=text: writeToEntry(text, disable_others=disable))
         if text == "=":
             b.configure(command=lambda: sendToServer(e))
         b.grid(row=r, column=c)
+        if text in operators + ['√']:
+            btns[text] = b
         tk_elements[i] = b
         c += 1
         if c == column_limit:
@@ -109,6 +178,9 @@ fm = Menu(m, tearoff=0)
 om = Menu(m, tearoff=0)
 hm = Menu(m, tearoff=0)
 m.add_cascade(label="File", menu=fm)
+history_image = PhotoImage(master=fm, file="img/history.png")
+fm.add_command(label="Cronologia", image=history_image,
+               compound="left", command=lambda db=db: cronologia(db))
 exit_image = PhotoImage(master=fm, file="img/exit.png")
 fm.add_command(label="Esci", image=exit_image,
                compound="left", command=w.destroy)
@@ -130,14 +202,19 @@ hm.add_command(label="Informazioni", image=info_image,
 e = Entry(w)
 e.grid(row=0, column=0, columnspan=3, sticky="nsew")
 e.bind('<Return>', lambda e: sendToServer(e.widget))
-e.bind('*', lambda event: writeToEntry("×"))
-e.bind('/', lambda event: writeToEntry("÷"))
+e.bind('+', lambda event: writeToEntry("+", pressed=True, disable_others=True))
+e.bind('-', lambda event: writeToEntry("-", pressed=True, disable_others=True))
+e.bind('*', lambda event: writeToEntry("×", pressed=True, disable_others=True))
+e.bind('/', lambda event: writeToEntry("÷", pressed=True, disable_others=True))
+e.bind('<BackSpace>', lambda event: writeToEntry("", reenable_others=True))
+e.bind('<Delete>', lambda event: writeToEntry("", reenable_others=True))
 
+btns = {}
+operators = ["+", "-", "×", "÷"]
 nf = Frame(w)
 nf.grid(row=1, column=1)
 buttons(nf, list(range(1, 10)) + ["√", 0, "="])
 
-operators = ["+", "-", "×", "÷"]
 of = Frame(w)
 of.grid(row=1, column=2, rowspan=2)
 buttons(of, operators, column_limit=1)
