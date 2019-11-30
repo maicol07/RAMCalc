@@ -18,11 +18,15 @@ def Risposta(r):
         risultato = sum(l)
     elif trova1 != (-1):
         l = r.split("-")
+        if not l[0]:
+            del l[0]
+        print(l)
         for p, e in enumerate(l):
             e = e.replace(",", ".")
             l[p] = float(e)
-            if p != 0:
-                l[p] = -int(e)
+            print(e)
+            if p != 0 and float(e) > 0:
+                l[p] = -float(e)
         risultato = sum(l)
     elif trova2 != (-1):
         l = r.split("×")
