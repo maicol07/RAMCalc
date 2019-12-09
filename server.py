@@ -7,51 +7,51 @@ import math
 
 
 def salvaInCronologia(expression, result):
-    db.insert(
-        'cronologia',
-        {"expression": expression, "result": result}
-    )
+    db.insert('cronologia', {"expression": expression, "result": result})  # Inserisci nella tabella cronologia del
+    # database l'espressione e il suo risultato
 
 
 def Risposta(r):
     risultato = r  # Inizializzazione risultato
-    clear = False
-    operators = ['×', '÷', '+', '-', '√']
-    while not clear:
-        for operator in operators:
-            trovato = r.find(operator)
-            if trovato != -1:
-                l = r.split(operator)
-                if operator == "-":
-                    if not l[0]:
-                        del l[0]
-                        l[0] = -float(l[0])
-                for p, e in enumerate(l):
-                    if type(e) == str:
-                        e = e.replace(",", ".")
-                    l[p] = float(e)
-                with Switch(operator) as case:
-                    if case(operators[0]):  # multiply
+    clear = False  # Inizializzazione variabile
+    operators = ['×', '÷', '+', '-', '√']  # Lista degli operatori
+    while not clear:  # Finchè l'espressione non è stata analizzata tutta, allora...
+        for operator in operators:  # ... per ogni operatore della lista operators ...
+            trovato = r.find(operator)  # trova l'operatore nella stringa
+            if trovato != -1:  # Se l'operatore è stato trovato...
+                l = r.split(operator)  # Dividi la stringa in base all'operatore
+                if operator == "-" and not l[0]:  # Se l'operatore è il - e se l'elemento in prima posizione
+                    # dell'espressione è vuoto (ad esempio: -2-1 --> l = ["", "2", "1"]
+                    del l[0]  # elimina quell'elemento
+                    l[0] = -float(l[0])  # trasforma il nuovo primo elemento in un float (numero decimale) negativo
+                for p, e in enumerate(l):  # Per ogni elemento (e la sua posizione) nell'espressione:
+                    if type(e) == str:  # se l'elemento attuale è una stringa ...
+                        e = e.replace(",",
+                                      ".")  # ... sostituisci tutte le virgole con dei punti (per la trasformazione in stringa)
+                    l[p] = float(e)  # Trasforma l'elemento in float
+                with Switch(operator) as case:  # Switch (controlla che l'operatore sia uguale a...
+                    if case(operators[0]):  # Primo operatore nella lista (multiply) + calcolo
                         risultato = 1
                         for x in l:
                             risultato = risultato * x
-                    elif case(operators[1]):  # divide
+                    elif case(operators[1]):  # Secondo operatore nella lista (divide) + calcolo
                         risultato = l[0]
                         for p, x in enumerate(l):
                             if p == 0:
                                 continue
                             risultato = risultato / x
-                    elif case(operators[2]):  # sum
+                    elif case(operators[2]):  # Terzo operatore nella lista (plus) + calcolo
                         risultato = sum(l)
-                    elif case(operators[3]):  # minus
+                    elif case(operators[3]):  # Quarto operatore nella lista (minus) + calcolo
                         for p, e in enumerate(l):
                             if p != 0 and float(e) > 0:
                                 l[p] = -float(e)
                         risultato = sum(l)
-                    elif case(operators[4]):  # square root
+                    elif case(operators[4]):  # Quinto operatore nella lista (square root) + calcolo
                         risultato = math.sqrt(float(l[1]))
-                clear = True
-    salvaInCronologia(r, risultato)
+                clear = True  # Quando il ciclo è concluso, imposta la variabile clear a True
+                # (l'espressione è stata analizzata)
+    salvaInCronologia(r, risultato)  # Salva nella cronologia l'espressione e il risultato
     return risultato
 
 
@@ -75,7 +75,7 @@ except IndexError:
 # Check if a server already exists
 try:
     s.bind((ip, 8888))
-except OSError:
+except OSError:  # otherwise
     exit()
 print("L'indirizzo ip di questo server è: {}".format(ip))
 s.listen(100)
