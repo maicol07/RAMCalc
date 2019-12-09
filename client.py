@@ -113,11 +113,7 @@ def ip(initialvalue=""):
     process = None
     if ip is None or ip == "":
         import subprocess
-        if sys.version_info.minor > 5:
-            cmd = 'python'
-        else:
-            cmd = 'py'
-        process = subprocess.Popen("{} server.py --localhost".format(cmd), shell=True, stdout=subprocess.DEVNULL)
+        process = subprocess.Popen("py server.py --localhost", shell=True, stdout=subprocess.DEVNULL)
         ip = "127.0.0.1"
     Mediatore.connetti(ip)
     return ip, process
