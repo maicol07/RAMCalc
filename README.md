@@ -1,3 +1,5 @@
+# SVILUPPO INTERROTTO!!! Questo progetto è nato come progetto scolastico e non verrà più aggiornato
+
 # RAMCalc
 ###### A simple calculator
 
